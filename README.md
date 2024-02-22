@@ -2,7 +2,8 @@
 
 ## Setup for LLM
 1. Clone the repository
-2. Create a virtual environment and activate it
+2. Make sure `pip` and `python` are installed on your machine
+3. Create a virtual environment and activate it
     ```
     python3 -m venv 222llmenv
     ```
@@ -16,4 +17,4 @@
     222llmenv\Scripts\activate
     ```
 
-3. Install the requirements using `pip install -r requirements.txt`
+4. Install the requirements using `pip install -r requirements.txt`
