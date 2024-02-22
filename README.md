@@ -4,16 +4,16 @@
 1. Clone the repository
 2. Create a virtual environment and activate it
     ```
-    python3 -m venv venv
+    python3 -m venv 222llmenv
     ```
     if using ubuntu
     ```
-    source venv/bin/activate
+    source 222llmenv/bin/activate
     ```
 
     if using windows
     ```
-    venv\Scripts\activate
+    222llmenv\Scripts\activate
     ```
 
 3. Install the requirements using `pip install -r requirements.txt`
