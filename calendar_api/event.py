@@ -1,7 +1,10 @@
-from datetime import date, datetime # Datetime
+"""Event object for storing event data."""
+
+from datetime import date, datetime
+
 
 class Event:
-    """Class for event object information."""
+    """Class for storing calendar event information."""
 
     def __init__(
             self,
@@ -15,6 +18,7 @@ class Event:
             id: str = None,
             reminders_default: bool = False
     ) -> None:
+        """Initialize Event with necessary information."""
         self.summary = summary
         self.description = description
         self.start = {
@@ -32,13 +36,15 @@ class Event:
         self.reminders = []
 
     def get_id(self) -> str:
+        """Get the id of an event."""
         return self.id
-    
+
     def update_reminder(
             self,
             method,
             minutes
     ) -> None:
+        """Add a reminder to the event."""
         reminder = {
             method,
             minutes
