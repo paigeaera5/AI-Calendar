@@ -41,8 +41,7 @@ def main():
     end = event["end"].get("dateTime", event["end"].get("date"))
     print(start, end, event["summary"])
   
-  print('deleting')
-  print(events[0]["summary"])
+  print('deleting' + events[0]["summary"])
   event_service.delete_event(events[0]["id"])
   events = event_service.get_events(keywords='mock', time_min=(Mar / 20 / 2024)[23:00]).get("items", [])
 
