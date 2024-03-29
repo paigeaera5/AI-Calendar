@@ -1,7 +1,7 @@
 export function MondayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
           d="
         M48.907150,283.937378 
@@ -58,7 +58,7 @@ export function MondayUnchecked() {
   export function MondayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
           d="
         M48.907150,283.937378 
@@ -115,7 +115,7 @@ export function MondayUnchecked() {
   export function TuesdayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
           d="
         M196.499207,38.192657 
@@ -161,7 +161,7 @@ export function MondayUnchecked() {
   export function TuesdayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
           d="
         M196.499207,38.192657 
@@ -208,7 +208,7 @@ export function MondayUnchecked() {
   export function WednesdayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
             d="
         M288.636688,386.816345 
@@ -267,7 +267,7 @@ export function MondayUnchecked() {
   export function WednesdayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
             d="
         M288.636688,386.816345 
@@ -326,7 +326,7 @@ export function MondayUnchecked() {
   export function ThursdayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
             d="
         M61.609818,310.301636 
@@ -383,7 +383,7 @@ export function MondayUnchecked() {
   export function ThursdayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
             d="
         M61.609818,310.301636 
@@ -440,7 +440,7 @@ export function MondayUnchecked() {
   export function FridayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
             d="
         M161.308807,391.909424 
@@ -492,7 +492,7 @@ export function MondayUnchecked() {
   export function FridayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
             d="
         M161.308807,391.909424 
@@ -544,7 +544,7 @@ export function MondayUnchecked() {
   export function SaturdayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
             d="
         M165.865768,392.393738 
@@ -598,7 +598,7 @@ export function MondayUnchecked() {
   export function SaturdayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
             d="
         M165.865768,392.393738 
@@ -652,7 +652,7 @@ export function MondayUnchecked() {
   export function SundayUnchecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" xml:space="preserve"*/>
         <path fill="#ffffff" opacity="1.000000" stroke="none" 
             d="
         M215.040817,37.703468 
@@ -697,7 +697,7 @@ export function MondayUnchecked() {
   export function SundayChecked() {
     return (
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" /*xmlns:xlink="http://www.w3.org/1999/xlink"*/ x="0px" y="0px"
-       width="24" viewBox="0 0 432 432" enable-background="new 0 0 432 432" /*xml:space="preserve"*/>
+       width="24" viewBox="0 0 432 432" /*enable-background="new 0 0 432 432" xml:space="preserve"*/>
         <path fill="#1976d2" opacity="1.000000" stroke="none" 
             d="
         M215.040817,37.703468 
