@@ -2,3 +2,4 @@
 222limenv/
 *.json
 .venv
+calendar_api/__pycache__

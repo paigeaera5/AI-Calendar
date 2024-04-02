@@ -1,6 +1,9 @@
 """Event object for storing event data."""
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+from typing import List, Union
+from beautiful_date import BeautifulDate
+from tzlocal import get_localzone_name
 
 
 class Event:
@@ -9,37 +12,42 @@ class Event:
     def __init__(
             self,
             summary: str,
-            description: str,
-            start_date: date,
-            start_datetime: datetime,
-            end_date: date,
-            end_datetime: datetime,
-            timezone: str = None,
+            start: Union[date, datetime, BeautifulDate],
+            end: Union[date, datetime, BeautifulDate] = None,
+            timezone: str = get_localzone_name(),
+            description: str = None,
             id: str = None,
+            reminders: List[{str, str}] = None,
             reminders_default: bool = False
     ) -> None:
         """Initialize Event with necessary information."""
         self.summary = summary
         self.description = description
-        self.start = {
-            "date": start_date,
-            "dateTime": start_datetime,
-            "timeZone": timezone
-        }
-        self.end = {
-            "date": end_date,
-            "dateTime": end_datetime,
-            "timeZone": timezone
-        }
+        self.start = start
+        self.end = end
+        if end:
+            self.end = end
+        elif isinstance(start, datetime):
+            print("good")
+            self.end = start + timedelta(hours=1)
+        elif isinstance(start, date):
+            print('adding day')
+            self.end = start + timedelta(days=1)
+        print(self.end)
+        if isinstance(self.start, BeautifulDate):
+            self.start = date(year=self.start.year, month=self.start.month, day=self.start.day)
+        if isinstance(self.end, BeautifulDate):
+            self.end = date(year=self.end.year, month=self.end.month, day=self.end.day)
+        self.timezone = timezone
         self.id = id
         self.reminder_default = reminders_default
-        self.reminders = []
+        self.reminders = reminders
 
     def get_id(self) -> str:
         """Get the id of an event."""
         return self.id
 
-    def update_reminder(
+    def add_reminder(
             self,
             method,
             minutes

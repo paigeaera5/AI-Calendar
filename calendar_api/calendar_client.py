@@ -13,6 +13,7 @@ class CalendarClient:
     """Class for storing calendar client setup."""
 
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
+    ORDERBY = ("startTime", "updated")
     creds = None
     service = None
     primary_cal = None
@@ -39,20 +40,20 @@ class CalendarClient:
 
         Returns the credentials.
         """
-        if os.path.exists("token.json"):
-            creds = Credentials.from_authorized_user_file("token.json",
+        if os.path.exists("calendar_api/token.json"):
+            self.creds = Credentials.from_authorized_user_file("calendar_api/token.json",
                                                           self.SCOPES)
         # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+        if not self.creds or not self.creds.valid:
+            if self.creds and self.creds.expired and self.creds.refresh_token:
+                self.creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "calendar_api/credentials.json", self.SCOPES
                 )
-                creds = flow.run_local_server(port=0)
+                self.creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
-            with open("token.json", "w") as token:
-                token.write(creds.to_json())
+            with open("calendar_api/token.json", "w") as token:
+                token.write(self.creds.to_json())
 
-        return creds
+        return self.creds
