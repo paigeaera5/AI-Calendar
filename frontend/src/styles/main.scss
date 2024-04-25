@@ -1,0 +1,67 @@
+@import 'colors';
+@import 'fonts';
+@import 'mixin';
+@import 'extender';
+@import 'override';
+
+.custom-textfield {
+    &.Mui-focused {
+        & .MuiOutlinedInput-notchedOutline {
+            border-color: #fff;
+        }
+        
+        & label {
+            color: #fff;
+        }
+    }
+
+    &:hover .MuiOutlinedInput-root {
+        fieldset {
+            border-color: #fff;
+        }
+    }
+
+    & .MuiInputLabel-root.Mui-focused {
+        color: #fff !important;
+    }
+
+    & .MuiInputLabel-root {
+        color: #fff;
+    }
+
+    & .MuiInputBase-input {
+        color: #fff;
+    }
+    
+    & .MuiOutlinedInput-notchedOutline {
+        border-color: #fff;
+    }
+
+    // &:hover .MuiOutlinedInput-notchedOutline {
+    //     border-color: #fff;
+    // }
+
+    // &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    //     border-color: #fff;
+    // }
+
+    // & label.Mui-focused {
+    //     color: #fff;
+    // }
+
+    & input {
+        color: #fff;
+    }
+    
+    & fieldset {
+        border-color: #fff;
+    }
+
+    &:hover fieldset {
+        border-color: #fff;
+    }
+
+    &.Mui-focused fieldset {
+        border-color: #fff;
+    }
+}
