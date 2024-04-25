@@ -1,14 +1,16 @@
-"""Create event based on LLM response and user preferences."""
+"""
+Create event based on LLM response and user preferences.
+
+This is what connects to the front end for generating llm events.
+"""
 
 from datetime import date, datetime, timedelta, time
-from dateutil.relativedelta import relativedelta
-from typing import List, Union
-from beautiful_date import BeautifulDate
-from tzlocal import get_localzone_name
+import re
+from typing import List
 from enum import IntEnum
-from calendar_client import CalendarClient
 from event_service import EventsService
-from free_busy_service import FreeBusyService
+from llm_output_service import LlmOutputData
+from availability import Availability
 from event import Event
 
 class Days(IntEnum):
@@ -26,112 +28,105 @@ class EventGenerator(EventsService):
 
     def __init__(
             self,
+            overall_task: str,
             llm_output: str,
-            start_date: Union[date, BeautifulDate],
+            start_date: date,
             start_time: time,
-            end_date: Union[date, BeautifulDate],
+            end_date: date,
             end_time: time,
-            days: List[int]
+            days: List[str]
     ) -> None:
         super().__init__()
-        self.subtasks = llm_output
+        self.overall = overall_task
+        self.llm_data = LlmOutputData(llm_output=llm_output)
         self.start_time = start_time
         self.end_time = end_time
         self.start_date = start_date
         self.end_date = end_date
-        self.days = days
+        self.days_str = ", ".join(days)
+        self.days = []
+        for day in days:
+            self.days.append(Days[day.upper()])
+        #print(self.days)
 
-        if isinstance(start_date, BeautifulDate):
-            self.start_date = date(year=start_date.year, month=start_date.month, day=start_date.day)
-        if isinstance(end_date, BeautifulDate):
-            self.end_date = date(year=end_date.year, month=end_date.month, day=end_date.day)
+        self.available = Availability(
+            start_date=start_date,
+            start_time=start_time,
+            end_date=end_date,
+            end_time=end_time,
+            days=self.days
+        )
 
-    def _free_times(
+        self.generated_events = self._make_events(overall_task=overall_task)
+
+    def add_to_cal(self) -> None:
+        for event in self.generated_events:
+            self.add_event(event)
+
+    def _find_time_matches(
             self,
-            events: List,
-            time_start: datetime,
-            time_end: datetime
+            lengths: List,
     ) -> List:
-        if not events:
-            return [(time_start, time_end)]
-        free = []
-        first = events[0]
-        #time_start = datetime.isoformat(time_start)
-        prev_start = datetime.fromisoformat(first["start"].get("dateTime", first["start"].get("date")))
-        if time_start < prev_start:
-            print('append 1',time_start, prev_start)
-            free.append((time_start, prev_start))
-        prev_end = datetime.fromisoformat(first["end"].get("dateTime", first["end"].get("date")))
-        for event in events:
-            start = datetime.fromisoformat(event["start"].get("dateTime", event["start"].get("date")))
-            end = datetime.fromisoformat(event["end"].get("dateTime", event["end"].get("date")))
-            if start == end + timedelta(days=1):
-                return [(time_start, time_end)]
-            print('start',start)
-            print('end',end)
-            if start < prev_end and time_start < start:
-                print('append 2',time_start, start)
-                free.append((time_start, start))
-            else:
-                print('append 3',prev_end, start)
-                free.append((prev_end, start))
-            prev_start = datetime.combine(start.date(), self.start_time)
-            prev_end = datetime.combine(end.date(), self.end_time)
-        if prev_end < time_end:
-            print('append 4',prev_end, time_end)
-            free.append((prev_end, time_end))
-        return free
+        time_list = []
+        frees = self.available.frees
+        day_idx = self.available.free_days
+        next_free = 0
+        for num, interval in lengths:
+            found = False
+            while not found:
+                if next_free >= len(day_idx):
+                    return []
+                times = frees.get(day_idx[next_free])
+                for time in times:
+                    time_diff = time[1] - time[0]
+                    if 'hour' in interval:
+                        total = time_diff.total_seconds() / 3600
+                    elif 'minute' in interval:
+                        total = time_diff.total_seconds() / 60
 
-    def find_free(self) -> List:
-        start = datetime.combine(self.start_date, self.start_time)
-        end = datetime.combine(self.start_date, self.end_time)
-        incr = timedelta(days=1)
-        free = []
-        while not start.date() == self.end_date:
-            print('here')
-            print(start, self.end_date)
-            if start.weekday() not in self.days:
-                start += incr
-                end += incr
-                continue
-            print(start)
-            print(end)
-            events = self.list_events(time_min=start, time_max=end).get("items", [])
-            print(len(events))
-            print('printing')
-            free.extend(self._free_times(events=events, time_start=start, time_end=end))
-            start += incr
-            end += incr
-        return free
+                    if (total < num):
+                        continue
+
+                    found = True
+                    time_list.append(time)
+                    break
+                next_free += 1
+        return time_list
     
-    def find_busy(self):
-        start = datetime.combine(self.start_date, self.start_time)
-        end = datetime.combine(self.start_date, self.end_time)
-        incr = relativedelta(days=1)
-        free = []
-        while not start.date() == self.end_date:
-            print('here')
-            print(start, end)
-            if start.weekday() not in self.days:
-                print('false')
-                start += incr
-                end += incr
-                continue
-            print('search start',start)
-            print('search end',end)
-            print("Next 10 events:")
-            events = self.list_events(time_min=start, time_max=end).get("items", [])
-            for event in events:
-                s = event["start"].get("dateTime", event["start"].get("date"))
-                e = event["end"].get("dateTime", event["end"].get("date"))
-                print(s, e, event["summary"])
-            freebusy = FreeBusyService(time_min=start, time_max=end)
-            print(freebusy.get_busy())
-            for x in freebusy.get_busy():
-                print('busy start',datetime.fromisoformat(x.get('start')).time())
-                print('busy end',datetime.fromisoformat(x.get('end')))
-            print('printing')
-            free.extend(freebusy.get_busy())
-            start += incr
-            end += incr
-        return free
+    def _make_events(
+            self,
+            overall_task: str
+    ) -> List:
+        error_msg = f"""\
+Not enough free time found. \
+Either make daily time frame longer or add more days.\
+"""
+        events = []
+        subtasks = self.llm_data.task_list
+        task_lengths = self.llm_data.task_lengths
+        times = self._find_time_matches(lengths=task_lengths)
+        
+        assert(len(times) == len(subtasks)), error_msg
+
+        for i in range(0, len(subtasks)):
+            task = subtasks[i]
+            event_summary = overall_task.capitalize() + ' (Part ' + str(i+1) + ')'            
+            num, interval = task_lengths[i]
+
+            start = times[i][0]
+            if 'hour' in interval:
+                end = start + timedelta(hours=num)
+            elif 'minute' in interval:
+                end = start + timedelta(minutes=num)
+
+            timezone = self.default_cal['timeZone']
+            events.append(
+                Event(
+                    summary=event_summary,
+                    start=start,
+                    end=end,
+                    timezone=timezone,
+                    description=task
+                )
+            )
+        return events

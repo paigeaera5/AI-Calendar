@@ -18,7 +18,7 @@ class Event:
             description: str = None,
             id: str = None,
             reminders: List[{str, str}] = None,
-            reminders_default: bool = False
+            reminders_default: bool = True
     ) -> None:
         """Initialize Event with necessary information."""
         self.summary = summary

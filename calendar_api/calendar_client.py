@@ -14,9 +14,6 @@ class CalendarClient:
 
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
     ORDERBY = ("startTime", "updated")
-    creds = None
-    service = None
-    default_cal = None
 
     def __init__(
             self,
