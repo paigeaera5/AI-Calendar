@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState,useEffect } from "react";
 import './App.css'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,9 +17,18 @@ import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs";
-
+import axios from "axios";
 
 function App() {
+  const fetchAPI = async(): Promise<void> => {
+    const response = await axios.get("http://127.0.0.1:8080/api/users");
+    console.log(response.data.users);
+  }
+
+  useEffect(() => {
+      fetchAPI();
+  }, []);
+  
   const [logReg, setLogReg] = useState(false);
 
   const [taskName, setTaskName] = useState("");
@@ -52,31 +61,62 @@ function App() {
 
   const handleSubmit = (event : React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log('taskName: ', taskName)
-    console.log('taskType: ', taskType)
+    // console.log('taskName: ', taskName)
+    // console.log('taskType: ', taskType)
     const daysChecked = Object.values(days).filter(value => value).length;
-    console.log('Days of Week Checked: ', daysChecked)
-    console.log('Sunday: ', U)
-    console.log('Monday: ', M)
-    console.log('Tuesday: ', T)
-    console.log('Wednesday: ', W)
-    console.log('Thursday: ', R)
-    console.log('Friday: ', F)
-    console.log('Saturday: ', S)
-    if (startDate) {
-      console.log('Start Date: ', startDate.toDate());
-    } else { console.log('Please enter start date'); }
-    if (endDate) {
-      console.log('End Date: ', endDate.toDate());
-    } else { console.log('Please enter end date'); }
+    const daysListHelper = Object.values(days);
+    const daysLabels : string[] = ["U", "M", "T", "W", "R", "F", "S"];
+    const daysList : string[] = [];
+    daysListHelper.forEach((value, i) => {
+      if (value) { daysList.push(daysLabels[i]); }
+    });
+    
+    // console.log('Days of Week Checked: ', daysChecked)
+    // console.log('Sunday: ', U)
+    // console.log('Monday: ', M)
+    // console.log('Tuesday: ', T)
+    // console.log('Wednesday: ', W)
+    // console.log('Thursday: ', R)
+    // console.log('Friday: ', F)
+    // console.log('Saturday: ', S)
+    // if (startDate) {
+    //   console.log('Start Date: ', startDate.toDate());
+    // } else { console.log('Please enter start date'); }
+    // if (endDate) {
+    //   console.log('End Date: ', endDate.toDate());
+    // } else { console.log('Please enter end date'); }
 
-    if (startTime) {
-      console.log('Start Time: ', startTime.toDate());
-    } else { console.log('Please enter start time'); }
-    if (endTime) {
-      console.log('End Time: ', endTime.toDate());
-    } else { console.log('Please enter end time'); }
-    console.log('Hours per Day: ', hoursPerDay);
+    // if (startTime) {
+    //   console.log('Start Time: ', startTime.toDate());
+    // } else { console.log('Please enter start time'); }
+    // if (endTime) {
+    //   console.log('End Time: ', endTime.toDate());
+    // } else { console.log('Please enter end time'); }
+    // console.log('Hours per Day: ', hoursPerDay);
+
+    axios.post("http://127.0.0.1:8080/acceptInput", { 
+      task_name: taskName, 
+      task_type: taskType,
+      num_days: daysChecked,
+      days: JSON.stringify(daysList),
+      start_date: startDate,
+      end_date: endDate,
+      start_time: startTime,
+      end_time: endTime,
+      hours_per_day: hoursPerDay,
+      u: U,
+
+    }, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   return (   
@@ -119,6 +159,7 @@ function App() {
             >
               <form 
                 onSubmit={handleSubmit}
+                method="post"
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
@@ -127,6 +168,7 @@ function App() {
               >
                 <TextField 
                   label="Task Name"
+                  id="task_name"
                   required
                   variant="outlined"
                   onChange={e=>setTaskName(e.target.value)}
