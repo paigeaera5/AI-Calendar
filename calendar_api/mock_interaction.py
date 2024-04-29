@@ -1,5 +1,4 @@
 from datetime import datetime, time, timedelta
-from calendar_client import CalendarClient
 from event_service import EventsService
 from event_generator import EventGenerator
 
@@ -8,7 +7,6 @@ def main():
     """Shows basic usage of the Google Calendar API.
     Prints the start, end, and name of the next 10 events on the user's calendar.
     """
-    client = CalendarClient()
     event_service = EventsService()
     task = "assemble Gaming DeskTop"
     output = """1. Research and select the appropriate components for the gaming desktop (time: 2 hours)
@@ -36,11 +34,11 @@ def main():
                 * Follow the manufacturer's instructions to assemble the desktop
                 * Connect all hardware components and ensure they are securely connected
                 * Test the desktop to ensure it is functioning properly
-                7. Finalize the desktop by adding any finishing touches (time: 1 hour)
+                7. Finalize the desktop by adding any finishing touches (time: 30 minutes)
                 * Add decorative elements such as stickers or lighting
                 * Connect any additional peripherals such as a keyboard or mouse
                 * Test the desktop one last time to ensure everything is working properly
-                Total time: 25 hours"""
+                Total time: 24.5 hours"""
     generator_start_date = datetime.now().date()
     generator_start_time = time(hour=11, minute=30)
     generator_end_date = generator_start_date + timedelta(days=21)
