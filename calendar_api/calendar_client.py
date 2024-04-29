@@ -14,11 +14,11 @@ class CalendarClient:
 
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
     ORDERBY = ("startTime", "updated")
-    creds = None
-    service = None
-    primary_cal = None
 
-    def __init__(self) -> None:
+    def __init__(
+            self,
+            calendar_id: str = 'primary'
+    ) -> None:
         """Initialize API client with credentials and calendar object."""
         self.creds = self._authenticate()
 
@@ -26,7 +26,7 @@ class CalendarClient:
             self.service = build("calendar", "v3", credentials=self.creds)
         except HttpError as error:
             print(f"An error occurred: {error}")
-        self.primary_cal = self.service.calendars().get(calendarId='primary').execute()
+        self.default_cal = self.service.calendars().get(calendarId='primary').execute()
 
     def _authenticate(self) -> Credentials:
         """Authenticate user with Google Calendar API.

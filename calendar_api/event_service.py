@@ -8,37 +8,48 @@ from beautiful_date import BeautifulDate, D
 from calendar_client import CalendarClient
 from event import Event
 
-import datetime
-
 
 class EventsService(CalendarClient):
     """Class for event management."""
 
-    def get_events(
+    def list_events(
             self,
-            calendar_id: str = None,
+            calendar_id: str = 'primary',
             max_results: int = None,
-            order_by: str = None,
+            order_by: str = 'startTime',
             keywords: str = None,
-            single_events: bool = False,
-            time_min: Union[date, datetime.datetime, BeautifulDate] = None,
-            time_max: Union[date, datetime.datetime, BeautifulDate] = None,
+            single_events: bool = True,
+            time_min: Union[date, datetime] = None,
+            time_max: Union[date, datetime] = None
     ) -> list:
         """Get a list of all events that currently exist."""
-        time_min = time_min or datetime.datetime.now()
+        time_min = time_min or datetime.now()
         time_max = time_max or time_min + timedelta(days=365)
-        if isinstance(time_min, BeautifulDate):
-            time_min = datetime.datetime(year=time_min.year, month=time_min.month, day=time_min.day)
-        if isinstance(time_max, BeautifulDate):
-            time_max = datetime.datetime(year=time_max.year, month=time_max.month, day=time_max.day)
+        if isinstance(time_min, date):
+            time_min = datetime(
+                year=time_min.year,
+                month=time_min.month,
+                day=time_min.day,
+                hour=0,
+                minute=0
+            )
+        if isinstance(time_max, date):
+            time_max = datetime(
+                year=time_max.year,
+                month=time_max.month,
+                day=time_max.day,
+                hour=23,
+                minute=59
+            )
         events = self.service.events().list(
-            calendarId=self.primary_cal['id'],
+            calendarId=calendar_id,
             timeMin=time_min.isoformat() + 'Z',
             timeMax=time_max.isoformat() + 'Z',
             q=keywords,
-            timeZone=self.primary_cal['timeZone'],
-            singleEvents=True,
-            orderBy='startTime'
+            timeZone=self.default_cal['timeZone'],
+            singleEvents=single_events,
+            maxResults = max_results,
+            orderBy=order_by
         ).execute()
         return events
 
@@ -57,28 +68,24 @@ class EventsService(CalendarClient):
             self,
             event: Event
     ):
-        """Add the provided event to the default calendar."""
-        data = {
-            "summary": event.summary,
-            "description": event.description
-        }
-        if isinstance(event.start, datetime.datetime) and isinstance(event.end, datetime.datetime):
-            data['start'] = {
-                'dateTime': event.start.isoformat(),
-                'timeZone': event.timezone
-            }
-            data['end'] = {
-                'dateTime': event.end.isoformat(),
-                'timeZone': event.timezone
-            }
-        elif isinstance(event.start, datetime.date) and isinstance(event.end, datetime.date):
-            data['start'] = {'date': event.start.isoformat()}
-            data['end'] = {'date': event.end.isoformat()}
+        """Add the provided Event object to the default calendar."""
+        data = event.to_resource()
 
         self.service.events().insert(
             calendarId='primary',
             body=data
         ).execute()
+
+    def quick_add(
+            self,
+            title: str,
+            calendar_id: str = 'primary'
+    ):
+        """Creates event in calendar by string description."""
+        self.service.events().quickAdd(
+            calendarId=calendar_id,
+            text=title
+        )
     
     def delete_event(
             self,

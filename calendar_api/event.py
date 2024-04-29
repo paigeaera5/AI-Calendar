@@ -18,7 +18,7 @@ class Event:
             description: str = None,
             id: str = None,
             reminders: List[{str, str}] = None,
-            reminders_default: bool = False
+            reminders_default: bool = True
     ) -> None:
         """Initialize Event with necessary information."""
         self.summary = summary
@@ -28,12 +28,9 @@ class Event:
         if end:
             self.end = end
         elif isinstance(start, datetime):
-            print("good")
             self.end = start + timedelta(hours=1)
         elif isinstance(start, date):
-            print('adding day')
             self.end = start + timedelta(days=1)
-        print(self.end)
         if isinstance(self.start, BeautifulDate):
             self.start = date(year=self.start.year, month=self.start.month, day=self.start.day)
         if isinstance(self.end, BeautifulDate):
@@ -58,3 +55,28 @@ class Event:
             minutes
         }
         self.reminders.append(reminder)
+
+    def to_resource(self):
+        """Convert Event object to event resource body used by API."""
+        data = {
+            'id': self.id,
+            'summary': self.summary,
+            'description': self.description,
+            'reminders': {
+                'useDefault': self.reminder_default,
+                'overrides': self.reminders
+            }
+        }
+        if isinstance(self.start, datetime) and isinstance(self.end, datetime):
+            data['start'] = {
+                'dateTime': self.start.isoformat(),
+                'timeZone': self.timezone
+            }
+            data['end'] = {
+                'dateTime': self.end.isoformat(),
+                'timeZone': self.timezone
+            }
+        elif isinstance(self.start, date) and isinstance(self.end, date):
+            data['start'] = {'date': self.start.isoformat()}
+            data['end'] = {'date': self.end.isoformat()}
+        return data
