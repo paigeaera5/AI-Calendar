@@ -1,15 +1,7 @@
-import os.path
-
-from datetime import date, datetime, time, timedelta
-from beautiful_date import Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sept, Oct, Dec, hours, days, Nov
+from datetime import datetime, time, timedelta
 from calendar_client import CalendarClient
 from event_service import EventsService
 from event_generator import EventGenerator
-from event import Event
-from availability import Availability
-
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 
 def main():
@@ -58,7 +50,7 @@ def main():
     day = datetime.now()
     end = day + timedelta(days=21)
     generator = EventGenerator(
-        overall_task=task,
+        event_name=task,
         llm_output=output,
         start_date=generator_start_date,
         start_time=generator_start_time,
@@ -66,17 +58,7 @@ def main():
         end_time=generator_end_time,
         days=days_of_week
     )
-    #print(generator.llm_data.task_list)
-    #print(output.splitlines())
 
-    #e = Event(summary="Mock event", start=(Apr / 24 / 2024)[13:00], timezone=client.default_cal['timeZone'])
-    #e1 = Event(summary="Mock event 1", start=(Apr / 26 / 2024), timezone=client.default_cal['timeZone'])
-    #e2 = Event(summary="Mock event 2", start=(Apr / 30 / 2024)[14:25], end=(Apr / 30 / 2024)[16:45], timezone=client.default_cal['timeZone'])
-    #event_service.add_event(e)
-    #event_service.add_event(e1)
-    #event_service.add_event(e2)
-    
-    #a = Availability(start_date=day.date(), start_time=time(hour=11, minute=30), end_date=end.date(), end_time=time(hour=18, minute=30), days=[Days.T, Days.F, Days.U])
     print("adding")
     generator.add_to_cal()
 
@@ -119,7 +101,7 @@ def main():
     try:
         days_of_week = ['T','U']
         generator = EventGenerator(
-        overall_task=task,
+        event_name=task,
         llm_output=output,
         start_date=generator_start_date,
         start_time=generator_start_time,
@@ -135,7 +117,7 @@ def main():
         generator_end_time = time(hour=18, minute=30)
         days_of_week = ['M','T','F','U']
         generator = EventGenerator(
-        overall_task=task,
+        event_name=task,
         llm_output=output,
         start_date=generator_start_date,
         start_time=generator_start_time,

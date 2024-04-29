@@ -1,10 +1,8 @@
 """EventService object for working with events in the calendar."""
 
 from datetime import date, datetime, timedelta
-from dateutil.relativedelta import relativedelta
 
-from typing import List, Union
-from beautiful_date import BeautifulDate, D
+from typing import Union
 from calendar_client import CalendarClient
 from event import Event
 
