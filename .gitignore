@@ -1,1 +1,7 @@
-222limenv/
+222llmenv/*
+222llmenv/
+node_modules/
+node_modules/*
+*.json
+.venv
+calendar_api/__pycache__
