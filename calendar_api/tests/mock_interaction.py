@@ -5,6 +5,7 @@ Test llm event generation and interactions with the Google Calendar API.
 import os, sys
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from event_service import EventsService
 from event_generator import EventGenerator
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -126,7 +127,7 @@ test the desktop one last time to ensure everything is working properly."""
 
 
     # Step 3 described in docstring (delete events and print remaining)
-    while len(events):
+    while len(events) != 1:
         print('\ndeleting ' + events[1]["summary"])
         event_service.delete_event(events[1]["id"])
         events = event_service.list_events(

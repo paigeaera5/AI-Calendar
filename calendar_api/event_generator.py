@@ -132,9 +132,7 @@ class EventGenerator(EventsService):
     ) -> List:
         """Create Event objects for each subtask."""
         events = []
-        subtasks = self.subtasks
-        task_lengths = self.task_lengths
-        times = self._find_time_matches(lengths=task_lengths)
+        times = self._find_time_matches(lengths=self.task_lengths)
 
         error_msg = """Not enough free time found. \
 Either make daily time frame longer or add more days of the week.\
@@ -145,7 +143,7 @@ Either make daily time frame longer or add more days of the week.\
         for i, task in enumerate(self.subtasks):
             event_summary = event_name.capitalize()+' (Part ' + str(i+1) + ')'
             description = task + '\n\n' + self.desciptions[i]
-            num, interval = task_lengths[i]
+            num, interval = self.task_lengths[i]
 
             start = times[i][0]
             if 'hour' in interval:

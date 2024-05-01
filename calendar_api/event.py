@@ -44,18 +44,6 @@ class Event:
         """Get the id of an event."""
         return self.id
 
-    def add_reminder(
-            self,
-            method,
-            minutes
-    ) -> None:
-        """Add a reminder to the event."""
-        reminder = {
-            method,
-            minutes
-        }
-        self.reminders.append(reminder)
-
     def to_resource(self):
         """Convert Event object to event resource body used by API."""
         data = {
