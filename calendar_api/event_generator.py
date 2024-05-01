@@ -4,13 +4,15 @@ Create event based on LLM response and user preferences.
 This is what connects to the front end for generating llm events.
 """
 
+import os, sys
 from typing import List
 from enum import IntEnum
-from datetime import date, datetime, timedelta, time
+from datetime import datetime, timedelta
 from event_service import EventsService
-from llm_output_service import LlmOutputData
 from availability import Availability
 from event import Event
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from llm.task import Task
 
 
 class Days(IntEnum):
@@ -30,13 +32,9 @@ class EventGenerator(EventsService):
 
     def __init__(
             self,
-            event_name: str,
-            llm_output: str,
-            start_date: date,
-            start_time: time,
-            end_date: date,
-            end_time: time,
-            days: List[str]
+            task_obj: Task,
+            subtasks: List,
+            descriptions: List
     ) -> None:
         """
         Initialize generator.
@@ -50,25 +48,51 @@ class EventGenerator(EventsService):
         :param days:        List of user specified days of the week
         """
         super().__init__()
-        self.overall = event_name
-        self.llm_data = LlmOutputData(llm_output=llm_output)
-        self.days = []
-        for day in days:
-            self.days.append(Days[day.upper()])
+        self.task = task_obj
+        self.subtasks = subtasks
+        self.task_lengths = self._find_task_lengths(subtasks=subtasks)
+        self.desciptions = descriptions
+
+        start_date = datetime.strptime(task_obj.start_date,
+                                       "%a, %d %b %Y %H:%M:%S %z").date()
+        end_date = datetime.strptime(task_obj.end_date,
+                                     "%a, %d %b %Y %H:%M:%S %z").date()
+
+        start_time = datetime.strptime(task_obj.start_time,
+                                       "%a, %d %b %Y %H:%M:%S %z").time()
+        end_time = datetime.strptime(task_obj.end_time,
+                                     "%a, %d %b %Y %H:%M:%S %z").time()
+
+        days = []
+        for day in task_obj.days:
+            days.append(Days[day.upper()])
 
         self.available = Availability(
             start_date=start_date,
             start_time=start_time,
             end_date=end_date,
             end_time=end_time,
-            days=self.days
+            days=days
         )
-        self.generated_events = self._make_events(event_name=event_name)
+        self.generated_events = self._make_events(event_name=task_obj.name)
 
     def add_to_cal(self) -> None:
         """Add all generated events to the users calendar."""
         for event in self.generated_events:
             self.add_event(event)
+
+    def _find_task_lengths(
+            self,
+            subtasks: List
+    ) -> List:
+        lengths = []
+        for task in subtasks:
+            time_idx = task.find('(time:') + 6
+            time_end = task.find(')', time_idx)
+            num, interval = task[time_idx:time_end].strip().split()
+            num = int(num)
+            lengths.append((num, interval))
+        return lengths
 
     def _find_time_matches(
             self,
@@ -108,18 +132,19 @@ class EventGenerator(EventsService):
     ) -> List:
         """Create Event objects for each subtask."""
         events = []
-        subtasks = self.llm_data.task_list
-        task_lengths = self.llm_data.task_lengths
+        subtasks = self.subtasks
+        task_lengths = self.task_lengths
         times = self._find_time_matches(lengths=task_lengths)
 
         error_msg = """Not enough free time found. \
 Either make daily time frame longer or add more days of the week.\
 """
 
-        assert (len(times) == len(subtasks)), error_msg
+        assert (len(times) == len(self.subtasks)), error_msg
 
-        for i, task in enumerate(subtasks):
+        for i, task in enumerate(self.subtasks):
             event_summary = event_name.capitalize()+' (Part ' + str(i+1) + ')'
+            description = task + '\n\n' + self.desciptions[i]
             num, interval = task_lengths[i]
 
             start = times[i][0]
@@ -135,7 +160,7 @@ Either make daily time frame longer or add more days of the week.\
                     start=start,
                     end=end,
                     timezone=timezone,
-                    description=task
+                    description=task + ':\n\n' + self.desciptions[i]
                 )
             )
         return events
