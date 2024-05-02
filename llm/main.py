@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from task import Task
 from datetime import datetime
+from llmpromptingclass import LLMPrompter
 import logging
 
 cal_task = Task("", "", [], 0, "", "", "", "", 0, 0, "")
@@ -47,8 +48,9 @@ def get_input():
         num_steps = int(num_days) * num_weeks
 
     length = str(num_months) + " months, " + str(num_weeks) + " weeks, " + str(num_days_left) + " days"
-
+    
     cal_task = Task(task_name, task_type, days, num_days, start_date, end_date, start_time, end_time, int(hours_per_day), num_steps, length)
+    llm_obj = LLMPrompter(task_name, num_steps, length, hours_per_day)
     
     return "Received task successfully", 200
 
