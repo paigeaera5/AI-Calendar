@@ -1,10 +1,8 @@
 """EventService object for working with events in the calendar."""
 
 from datetime import date, datetime, timedelta
-from dateutil.relativedelta import relativedelta
 
-from typing import List, Union
-from beautiful_date import BeautifulDate, D
+from typing import Union
 from calendar_client import CalendarClient
 from event import Event
 
@@ -53,17 +51,6 @@ class EventsService(CalendarClient):
         ).execute()
         return events
 
-    def get_event(
-            self,
-            event_id: str
-    ):
-        """Get data about a single event."""
-        event = self.service.events().get(
-            calendarId='primary',
-            eventId=event_id
-        ).execute()
-        return event
-
     def add_event(
             self,
             event: Event
@@ -75,17 +62,6 @@ class EventsService(CalendarClient):
             calendarId='primary',
             body=data
         ).execute()
-
-    def quick_add(
-            self,
-            title: str,
-            calendar_id: str = 'primary'
-    ):
-        """Creates event in calendar by string description."""
-        self.service.events().quickAdd(
-            calendarId=calendar_id,
-            text=title
-        )
     
     def delete_event(
             self,
