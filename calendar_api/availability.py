@@ -3,7 +3,7 @@
 from datetime import time, date, datetime, timedelta
 from typing import Dict, List
 from collections import namedtuple
-from event_service import EventsService
+from .event_service import EventsService
 
 TimeRange = namedtuple('TimeRange', ('start', 'end'))
 

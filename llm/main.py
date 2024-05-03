@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
+import os, sys
 from task import Task
 from datetime import datetime
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from calendar_api.event_generator import EventGenerator
 from llmpromptingclass import LLMPrompter
 import logging
 
@@ -51,6 +54,12 @@ def get_input():
     
     cal_task = Task(task_name, task_type, days, num_days, start_date, end_date, start_time, end_time, int(hours_per_day), num_steps, length)
     llm_obj = LLMPrompter(task_name, num_steps, length, hours_per_day)
+
+    try:
+        generator = EventGenerator(task_obj=cal_task, subtasks=llm_obj.events, descriptions=llm_obj.event_descriptions)
+        generator.add_to_cal()
+    except AssertionError as e:
+        return e, # Return error if not enough time available
     
     return "Received task successfully", 200
 

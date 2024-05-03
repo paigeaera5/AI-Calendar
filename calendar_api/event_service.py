@@ -3,8 +3,8 @@
 from datetime import date, datetime, timedelta
 
 from typing import Union
-from calendar_client import CalendarClient
-from event import Event
+from .calendar_client import CalendarClient
+from .event import Event
 
 
 class EventsService(CalendarClient):

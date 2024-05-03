@@ -8,9 +8,9 @@ import os, sys
 from typing import List
 from enum import IntEnum
 from datetime import datetime, timedelta
-from event_service import EventsService
-from availability import Availability
-from event import Event
+from .event_service import EventsService
+from .availability import Availability
+from .event import Event
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from llm.task import Task
 
