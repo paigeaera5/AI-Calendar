@@ -571,7 +571,7 @@ function LogReg() {
   <Login onFormSwitch={toggleForm} />
 ) : (
   <GoogleLogin
-    clientId="YOUR_CLIENT_ID" // Your actual client ID
+    clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" // Your actual client ID
     buttonText="Sign in with Google"
     onSuccess={(response) => {
       console.log(response);
