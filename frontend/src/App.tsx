@@ -20,16 +20,116 @@ import dayjs from "dayjs";
 import axios from "axios";
 //import GoogleLogin from 'react-google-login';
 import { GoogleLogin } from 'react-google-login';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { gapi } from 'gapi-script';
+
+const localizer = momentLocalizer(moment);
+
+interface CalendarEvent {
+  kind: string;
+  etag: string;
+  id: string;
+  status: string;
+  htmlLink: string;
+  created: string;
+  updated: string;
+  summary: string;
+  creator: {
+    email: string;
+    self: boolean;
+  };
+  organizer: {
+    email: string;
+    self: boolean;
+  };
+  start: {
+    date: string;
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    date: string;
+    dateTime: string;
+    timeZone: string;
+  };
+  iCalUID: string;
+  sequence: number;
+  hangoutLink: string;
+  conferenceData: {
+    createRequest: {
+      requestId: string;
+      conferenceSolutionKey: {
+        type: string;
+      };
+      status: {
+        statusCode: string;
+      };
+    };
+    entryPoints: {
+      entryPointType: string;
+      uri: string;
+      label: string;
+    }[];
+    conferenceSolution: {
+      key: {
+        type: string;
+      };
+      name: string;
+      iconUri: string;
+    };
+    conferenceId: string;
+  };
+  reminders: {
+    useDefault: boolean;
+  };
+  eventType: string;
+}
+
+interface CalEvent {
+  title: string;
+  start: Date;
+  end: Date;
+}
 
 function App() {
-  const fetchAPI = async(): Promise<void> => {
-    const response = await axios.get("http://127.0.0.1:8080/api/users");
-    console.log(response.data.users);
-  }
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [preEvents, setPreEvents] = useState<CalEvent[]>([]);
+  const [rerender, setRerender] = useState(0);
 
-  useEffect(() => {
-      fetchAPI();
-  }, []);
+  // const fetchAPI = async(): Promise<void> => {
+  //   const response = await axios.get("http://127.0.0.1:8080/api/users");
+  //   console.log(response.data.users);
+  // }
+
+  // useEffect(() => {
+  //     fetchAPI();
+  // }, []);
+
+  // useEffect(() => {
+  //   function start() {
+  //     gapi.client.init({
+  //       clientId: "120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com",
+  //       scope: "https://www.googleapis.com/auth/calendar.readonly"
+  //     })
+  //   };
+
+  //   gapi.load('client:auth2', start);
+  // });
+
+  
+  // const fetchEvents = async() => {
+  //   console.log("In fetchEvents");
+  //   try {
+  //     const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events');
+  //     const data = await response.json();
+  //     setEvents(data.items);
+  //     console.log(events);
+  //   } catch (e) {
+  //     console.error('Error fetching events:', e);
+  //   }
+  // };
   
   const [logReg, setLogReg] = useState(false);
 
@@ -60,6 +160,53 @@ function App() {
   const handleDays = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDays({ ...days, [e.target.name]: e.target.checked });
   };
+
+  const getEvents = () => {
+    gapi.load('client:auth2', () => {
+      console.log('loaded client');
+      gapi.client.init({
+        // apiKey: "AIzaSyCRMsznpjVBJl1WHQWNOKG6JV45F7Kea3E",
+        clientId: "405310223043-rk44vq38nfkfavorqthup2s98nrnoe2d.apps.googleusercontent.com",
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+        scope: "https://www.googleapis.com/auth/calendar"
+      })
+
+      gapi.client.load('calendar', 'v3', () => console.log('loaded calendar'));
+
+      gapi.auth2.getAuthInstance().signIn()
+      .then(() => {
+        gapi.client.calendar.events.list({
+          'calendarId': 'primary'
+        }).then((response: { result: { items: CalendarEvent[] } }) => {
+            const calEvents = response.result.items;
+            console.log(calEvents);
+            const newCalEvents: CalEvent[] = calEvents
+            .filter(event => event.start && event.end)
+            .map((event) => ({
+              title: event.summary,
+              start: event.start.dateTime ? new Date(event.start.dateTime) : new Date(event.start.date),
+              end: event.end.dateTime ? new Date(event.end.dateTime) : new Date(event.end.date)
+            }));
+            setPreEvents(newCalEvents);
+            // const output: string = calEvents.reduce(
+            //   (str: string, event: any): string =>
+            //     `${str}${event.summary} (${
+            //       event.start.dateTime || event.start.date
+            //     })\n`,
+            //   "Events:\n"
+            // )
+
+            // console.log(output);
+        })
+      });
+    })
+  }
+
+  useEffect(() => {
+    // This function will run after the events state has been updated
+    console.log("Events have been updated:", events);
+    setRerender(pre => pre + 1);
+  }, [events]); // Watch for changes to the events state
 
   const handleSubmit = (event : React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -121,15 +268,6 @@ function App() {
       });
   }
 
-  const onSuccess = (response: any) => {
-    console.log('Login Success:', response.profileObj);
-    // Proceed with handling the login data, e.g., setting user state, redirecting, etc.
-  };
-
-  const onFailure = (response: any) => {
-    console.error('Login Failed:', response);
-  };
-
   return (   
     <LocalizationProvider dateAdapter={AdapterDayjs}> 
       <Box>
@@ -141,26 +279,38 @@ function App() {
             flexDirection: "row-reverse",
           }} 
           >
+
             <Box sx={{ 
-              mx: "2vw",
+              mx: "1vw",
               my: "4vh",
               height: "8vh",
               width: "8%",
               display: "flex",
-              justifyContent: "right"
-            }}>
-        <GoogleLogin
-          clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" // Replace with your actual client ID
-          buttonText="Sign in with Google"
-          onSuccess={onSuccess}
-          onFailure={onFailure}
-          cookiePolicy={'single_host_origin'}
-        />
+              justifyContent: "right",
+              flexDirection: "column",
+            }}
+            >
+              {/* <GoogleLogin
+                clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" 
+                buttonText="Sign in"
+                onSuccess={(response) => {
+                  console.log(response);
+                  // toggleForm('dashboard');
+                  fetchEvents();
+                }}
+                onFailure={(error) => console.error(error)}
+                cookiePolicy={'single_host_origin'}
+                // @ts-ignore
+                scope="https://www.googleapis.com/auth/calendar.events.readonly"
+              /> */}
+              
+              <Button sx={{width: "100%"}} onClick={() => {getEvents()}} variant="contained">Sign In</Button>
+              <Button sx={{width: "100%", my: "1vh"}} onClick={() => {console.log(preEvents); setEvents(preEvents); console.log(events);}} variant="contained">load cal</Button>
             </Box>
 
             <Box sx={{
               my: "10vh",
-              mx: "2vw",
+              mx: "1vw",
               height: "calc(100% - 20vh)",
               maxHeight: "500px",
               width: "25%",
@@ -559,10 +709,32 @@ function App() {
 
               </form>
             </Box>
+            <Box sx={{
+              width: "50%",
+              my: "10vh",
+              height: "calc(100% - 20vh)",
+              border: 3,
+              borderRadius: 3,
+              py: "2vh",
+              px: "2vw",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}>
+              <Calendar 
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: "100%" }}
+                key={rerender}
+              />
+            </Box>
+
           </Box>
         }
       </Box>
-    </LocalizationProvider>
+    </LocalizationProvider>    
   );
 }
 
@@ -585,11 +757,11 @@ function LogReg() {
   <Login onFormSwitch={toggleForm} />
 ) : (
   <GoogleLogin
-    clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" // Your actual client ID
+    clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" 
     buttonText="Sign in with Google"
     onSuccess={(response) => {
       console.log(response);
-      toggleForm('dashboard');
+      // toggleForm('dashboard');
     }}
     onFailure={(error) => console.error(error)}
     cookiePolicy={'single_host_origin'}
@@ -600,17 +772,22 @@ function LogReg() {
   );
 }
 
-function UncheckedLogo() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
-  );
-}
 
-function CheckedLogo() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
-  );
-}
+
+
+// function UncheckedLogo() {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+//   );
+// }
+
+// function CheckedLogo() {
+//   return (
+//     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+//   );
+// }
+
+
 
 
 export default App
