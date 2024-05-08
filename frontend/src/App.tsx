@@ -266,6 +266,24 @@ function App() {
       .catch(error => {
         console.error(error);
       });
+
+
+    setTaskName("");
+    setTaskType("");
+    setStartDate(null);
+    setEndDate(null);
+    setStartTime(null);
+    setEndTime(null);
+    setHoursPerDay(0.0);
+    setDays({
+      U: false,
+      M: false,
+      T: false,
+      W: false,
+      R: false,
+      F: false,
+      S: false
+    });
   }
 
   return (   
