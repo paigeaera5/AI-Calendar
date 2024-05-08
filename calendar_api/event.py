@@ -2,7 +2,6 @@
 
 from datetime import date, datetime, timedelta
 from typing import List, Union
-from beautiful_date import BeautifulDate
 from tzlocal import get_localzone_name
 
 
@@ -12,8 +11,8 @@ class Event:
     def __init__(
             self,
             summary: str,
-            start: Union[date, datetime, BeautifulDate],
-            end: Union[date, datetime, BeautifulDate] = None,
+            start: Union[date, datetime],
+            end: Union[date, datetime] = None,
             timezone: str = get_localzone_name(),
             description: str = None,
             id: str = None,
@@ -31,10 +30,6 @@ class Event:
             self.end = start + timedelta(hours=1)
         elif isinstance(start, date):
             self.end = start + timedelta(days=1)
-        if isinstance(self.start, BeautifulDate):
-            self.start = date(year=self.start.year, month=self.start.month, day=self.start.day)
-        if isinstance(self.end, BeautifulDate):
-            self.end = date(year=self.end.year, month=self.end.month, day=self.end.day)
         self.timezone = timezone
         self.id = id
         self.reminder_default = reminders_default

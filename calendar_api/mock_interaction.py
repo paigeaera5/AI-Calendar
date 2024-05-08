@@ -6,9 +6,8 @@ import os, sys
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from event_service import EventsService
-from event_generator import EventGenerator
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from calendar_api.event_service import EventsService
+from calendar_api.event_generator import EventGenerator
 from llm.task import Task
 
 
