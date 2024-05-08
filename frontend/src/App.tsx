@@ -18,25 +18,17 @@ import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-picker
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs";
 import axios from "axios";
-import { GoogleLogin } from '@react-oauth/google';
+//import GoogleLogin from 'react-google-login';
+import { GoogleLogin } from 'react-google-login';
 
 function App() {
-
   const fetchAPI = async(): Promise<void> => {
     const response = await axios.get("http://127.0.0.1:8080/api/users");
     console.log(response.data.users);
   }
 
-  const [showGoogleLogin, setShowGoogleLogin] = useState(false);
-
   useEffect(() => {
-    axios.get("http://127.0.0.1:8080/api/users")
-      .then(response => {
-        console.log(response.data.users);
-      })
-      .catch(error => {
-        console.error('API fetch error:', error);
-      });
+      fetchAPI();
   }, []);
   
   const [logReg, setLogReg] = useState(false);
@@ -51,33 +43,6 @@ function App() {
   const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null);
   
   const [hoursPerDay, setHoursPerDay] = useState(0.0);
-
-
-  
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-      {showGoogleLogin ? (
-        <GoogleLogin
-          onSuccess={credentialResponse => {
-            console.log(credentialResponse);
-            setShowGoogleLogin(false);  // Optionally hide after successful login
-          }}
-          onError={() => {
-            console.log('Login Failed');
-            setShowGoogleLogin(false);  // Optionally hide after failed attempt
-          }}
-        />
-      ) : (
-        <>
-          <Button variant="contained" onClick={() => setShowGoogleLogin(true)} sx={{ width: 'auto', padding: '10px 20px', margin: '10px' }}>
-            Google Login
-          </Button>
-          <Button variant="contained" sx={{ width: 'auto', padding: '10px 20px', margin: '10px' }}>
-            Sign In
-          </Button>
-        </>
-      )}
-    </Box>
-
 
   // Checkbox Group
   const [days, setDays] = useState({
@@ -153,13 +118,13 @@ function App() {
       })
       .catch(error => {
         console.error(error);
-      })
+      });
   }
 
   return (   
     <LocalizationProvider dateAdapter={AdapterDayjs}> 
       <Box>
-        {logReg ? <LogReg /> :(
+        {logReg ? <LogReg /> :
           <Box sx={{
             width: "100vw",
             height: "100vh",
@@ -168,7 +133,7 @@ function App() {
           }} 
           >
             <Box sx={{ 
-              mx: "13vw",
+              mx: "2vw",
               my: "4vh",
               height: "8vh",
               width: "8%",
@@ -580,14 +545,11 @@ function App() {
 
               </form>
             </Box>
-            <Button variant="contained" onClick={() => setShowGoogleLogin(true)} sx={{ width: 'auto', padding: '10px 20px', margin: '10px' }}>
-              Google Login
-            </Button>
           </Box>
-        )}
+        }
       </Box>
     </LocalizationProvider>
-  )
+  );
 }
 
 function LogReg() {
@@ -605,8 +567,22 @@ function LogReg() {
       flexDirection: "column"
     }}
     >
-      { currentForm === "login" ? <Login onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm} /> }
+      {currentForm === "login" ? (
+  <Login onFormSwitch={toggleForm} />
+) : (
+  <GoogleLogin
+    clientId="YOUR_CLIENT_ID" // Your actual client ID
+    buttonText="Sign in with Google"
+    onSuccess={(response) => {
+      console.log(response);
+      toggleForm('dashboard');
+    }}
+    onFailure={(error) => console.error(error)}
+    cookiePolicy={'single_host_origin'}
+  />
+)}
     </Box>
+    
   );
 }
 
@@ -623,4 +599,4 @@ function CheckedLogo() {
 }
 
 
-export default App;
+export default App
