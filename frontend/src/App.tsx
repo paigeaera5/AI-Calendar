@@ -121,6 +121,15 @@ function App() {
       });
   }
 
+  const onSuccess = (response: any) => {
+    console.log('Login Success:', response.profileObj);
+    // Proceed with handling the login data, e.g., setting user state, redirecting, etc.
+  };
+
+  const onFailure = (response: any) => {
+    console.error('Login Failed:', response);
+  };
+
   return (   
     <LocalizationProvider dateAdapter={AdapterDayjs}> 
       <Box>
@@ -139,9 +148,14 @@ function App() {
               width: "8%",
               display: "flex",
               justifyContent: "right"
-            }}
-            >
-              <Button sx={{width: "100%"}} onClick={() => {setLogReg(!logReg)}} variant="contained">Sign In</Button>
+            }}>
+        <GoogleLogin
+          clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" // Replace with your actual client ID
+          buttonText="Sign in with Google"
+          onSuccess={onSuccess}
+          onFailure={onFailure}
+          cookiePolicy={'single_host_origin'}
+        />
             </Box>
 
             <Box sx={{
