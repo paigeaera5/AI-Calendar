@@ -23,7 +23,10 @@ import { GoogleLogin } from 'react-google-login';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './CustomCalendar.css';
 import { gapi } from 'gapi-script';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
@@ -93,6 +96,90 @@ interface CalEvent {
   end: Date;
 }
 
+const theme = createTheme({
+  typography: {
+    fontFamily: "Gill Sans, sans-serif",
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: '#F9FCFB', // Ensures text color is black (or choose a color for better visibility)
+          backgroundColor: '#0f4953', // a coral color for normal state
+          '&:hover': {
+            backgroundColor: '#CBF5EF', // a light teal color
+          },
+          '&:active': {
+            backgroundColor: '#FFCFD2', // a pale pink color
+          },
+          '&.Mui-disabled': {
+            backgroundColor: '#E0E0E0', // grey
+            color: '#9E9E9E', // dark grey
+          }
+        },
+        containedPrimary: { // Assuming primary variant is being used
+          '&:hover': {
+            backgroundColor: '#227f8f', // Color on hover
+          },
+          '&.Mui-active, &.Mui-focusVisible': { // Active or focused state
+            backgroundColor: '#0f4953', // Example active color
+            borderColor: '#0f4953' // Change border color if necessary
+          }
+        },
+
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '& fieldset': {
+            borderColor: '#CBF5EF', // Default border color
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#CBF5EF', // Border color on hover
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#CBF5EF', // Border color when focused
+          }
+        },
+        input: {
+          color: '#0F4953', // Text color
+        }
+      }
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: '#CBF5EF',
+          '&.Mui-focused': {
+            color: '#CBF5EF',
+          }
+        },
+      }
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          color: 'pink',
+          backgroundColor: 'transparent',
+          borderColor: '#ffcfd2', // Border color
+          '&:hover': {
+            backgroundColor: '#ffcfd2', // Change as needed
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#ffcfd2', // Active background color
+            color: 'white', // Active text color
+            '&:hover': {
+              backgroundColor: '#ffcfd2', // Ensure the hover state also uses the active color
+            }
+          }
+        }
+      }
+    }
+  },
+});
+
+
 function App() {
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [preEvents, setPreEvents] = useState<CalEvent[]>([]);
@@ -161,6 +248,7 @@ function App() {
     setDays({ ...days, [e.target.name]: e.target.checked });
   };
 
+
   const getEvents = () => {
     gapi.load('client:auth2', () => {
       console.log('loaded client');
@@ -219,7 +307,8 @@ function App() {
     daysListHelper.forEach((value, i) => {
       if (value) { daysList.push(daysLabels[i]); }
     });
-    
+
+
     // console.log('Days of Week Checked: ', daysChecked)
     // console.log('Sunday: ', U)
     // console.log('Monday: ', M)
@@ -287,472 +376,474 @@ function App() {
   }
 
   return (   
-    <LocalizationProvider dateAdapter={AdapterDayjs}> 
-      <Box>
-        {logReg ? <LogReg /> :
-          <Box sx={{
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "row-reverse",
-          }} 
-          >
-
-            <Box sx={{ 
-              mx: "1vw",
-              my: "4vh",
-              height: "8vh",
-              width: "8%",
-              display: "flex",
-              justifyContent: "right",
-              flexDirection: "column",
-            }}
-            >
-              {/* <GoogleLogin
-                clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" 
-                buttonText="Sign in"
-                onSuccess={(response) => {
-                  console.log(response);
-                  // toggleForm('dashboard');
-                  fetchEvents();
-                }}
-                onFailure={(error) => console.error(error)}
-                cookiePolicy={'single_host_origin'}
-                // @ts-ignore
-                scope="https://www.googleapis.com/auth/calendar.events.readonly"
-              /> */}
-              
-              <Button sx={{width: "100%"}} onClick={() => {getEvents()}} variant="contained">Sign In</Button>
-              <Button sx={{width: "100%", my: "1vh"}} onClick={() => {console.log(preEvents); setEvents(preEvents); console.log(events);}} variant="contained">load cal</Button>
-            </Box>
-
+    <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}> 
+        <Box>
+          {logReg ? <LogReg /> :
             <Box sx={{
-              my: "10vh",
-              mx: "1vw",
-              height: "calc(100% - 20vh)",
-              maxHeight: "500px",
-              width: "25%",
-              border: 3,
-              borderRadius: 3,
-              py: "2vh",
-              px: "2vw",
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-            }}
+              width: "100vw",
+              height: "100vh",
+              display: "flex",
+              flexDirection: "row-reverse",
+            }} 
             >
-              <form 
-                onSubmit={handleSubmit}
-                method="post"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                }}
+
+              <Box sx={{ 
+                mx: "1vw",
+                my: "4vh",
+                height: "8vh",
+                width: "8%",
+                display: "flex",
+                justifyContent: "right",
+                flexDirection: "column",
+              }}
               >
-                <TextField 
-                  label="Task Name"
-                  id="task_name"
-                  required
-                  variant="outlined"
-                  onChange={e=>setTaskName(e.target.value)}
-                  value={taskName}
-                  // className="custom-textfield"
-                  // color='primary'
-                  sx={{
-                    my: '2%',
-                    color: 'white',
-                    '& .MuiFormLabel-root': {
-                      color: 'white',
-                    },
-                    '& .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiInputBase-input': {
-                      color: 'white',
-                    },
+                {/* <GoogleLogin
+                  clientId="120763005234-tu9n1f37g98e3pdcc3105aluslmkkjhn.apps.googleusercontent.com" 
+                  buttonText="Sign in"
+                  onSuccess={(response) => {
+                    console.log(response);
+                    // toggleForm('dashboard');
+                    fetchEvents();
                   }}
-                />
+                  onFailure={(error) => console.error(error)}
+                  cookiePolicy={'single_host_origin'}
+                  // @ts-ignore
+                  scope="https://www.googleapis.com/auth/calendar.events.readonly"
+                /> */}
+                
+                <Button sx={{width: "100%"}} onClick={() => {getEvents()}} variant="contained">Sign In</Button>
+                <Button sx={{width: "100%", my: "1vh"}} onClick={() => {console.log(preEvents); setEvents(preEvents); console.log(events);}} variant="contained">load cal</Button>
+              </Box>
 
-                <TextField 
-                  label="Task Type"
-                  required
-                  variant="outlined"
-                  onChange={e=>setTaskType(e.target.value)}
-                  value={taskType}
-                  // className="custom-textfield"
-                  // color='primary'
-                  sx={{
-                    my: '2%',
-                    color: 'white',
-                    '& .MuiFormLabel-root': {
-                      color: 'white',
-                    },
-                    '& .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiInputBase-input': {
-                      color: 'white',
-                    },
-                  }}
-                />
-
-                <FormGroup
-                  sx={{
+              <Box sx={{
+                my: "10vh",
+                mx: "1vw",
+                height: "calc(100% - 20vh)",
+                maxHeight: "500px",
+                width: "25%",
+                border: 3,
+                borderRadius: 3,
+                py: "2vh",
+                px: "2vw",
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+              }}
+              >
+                <form 
+                  onSubmit={handleSubmit}
+                  method="post"
+                  style={{
                     display: 'flex',
-                    flexDirection: 'row'
+                    justifyContent: 'center',
+                    flexDirection: 'column',
                   }}
                 >
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<SundayUnchecked />} 
-                        checkedIcon={<SundayChecked/>} 
-                        checked={U}
-                        onChange={handleDays}
-                        name="U"
-                      />
-                    } 
-                    label="" 
+                  <TextField 
+                    label="Task Name"
+                    id="task_name"
+                    required
+                    variant="outlined"
+                    onChange={e=>setTaskName(e.target.value)}
+                    value={taskName}
+                    // className="custom-textfield"
+                    // color='primary'
+                    sx={{
+                      my: '2%',
+                      color: 'white',
+                      '& .MuiFormLabel-root': {
+                        color: 'white',
+                      },
+                      '& .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiInputBase-input': {
+                        color: 'white',
+                      },
+                    }}
                   />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<MondayUnchecked />} 
-                        checkedIcon={<MondayChecked/>}
-                        checked={M}
-                        onChange={handleDays}
-                        name="M"
-                      />
-                    } 
-                    label="" 
-                  />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<TuesdayUnchecked />} 
-                        checkedIcon={<TuesdayChecked/>}
-                        checked={T}
-                        onChange={handleDays}
-                        name="T"
-                      />
-                    } 
-                    label="" 
-                  />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<WednesdayUnchecked />} 
-                        checkedIcon={<WednesdayChecked/>}
-                        checked={W}
-                        onChange={handleDays}
-                        name="W"
-                      />
-                    } 
-                    label="" 
-                  />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<ThursdayUnchecked />} 
-                        checkedIcon={<ThursdayChecked/>}
-                        checked={R}
-                        onChange={handleDays}
-                        name="R"
-                      />
-                    } 
-                    label="" />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<FridayUnchecked />} 
-                        checkedIcon={<FridayChecked/>}
-                        checked={F}
-                        onChange={handleDays}
-                        name="F"
-                      />
-                    } 
-                    label="" 
-                  />
-                  <FormControlLabel 
-                    control={
-                      <Checkbox 
-                        icon={<SaturdayUnchecked />} 
-                        checkedIcon={<SaturdayChecked/>}
-                        checked={S}
-                        onChange={handleDays}
-                        name="S"
-                      />
-                    } 
-                    label="" 
-                  />
-                </FormGroup>
 
-                <FormGroup
-                  sx={{
-                    my: '2vh',
-                    display: 'flex',
-                    flexDirection: 'row'
-                  }}
-                >
-                  <DatePicker 
-                    onChange={(date)=>setStartDate(date)}
-                    value={startDate}
+                  <TextField 
+                    label="Task Type"
+                    required
+                    variant="outlined"
+                    onChange={e=>setTaskType(e.target.value)}
+                    value={taskType}
+                    // className="custom-textfield"
+                    // color='primary'
+                    sx={{
+                      my: '2%',
+                      color: 'white',
+                      '& .MuiFormLabel-root': {
+                        color: 'white',
+                      },
+                      '& .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiInputBase-input': {
+                        color: 'white',
+                      },
+                    }}
+                  />
+
+                  <FormGroup
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<SundayUnchecked />} 
+                          checkedIcon={<SundayChecked/>} 
+                          checked={U}
+                          onChange={handleDays}
+                          name="U"
+                        />
+                      } 
+                      label="" 
+                    />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<MondayUnchecked />} 
+                          checkedIcon={<MondayChecked/>}
+                          checked={M}
+                          onChange={handleDays}
+                          name="M"
+                        />
+                      } 
+                      label="" 
+                    />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<TuesdayUnchecked />} 
+                          checkedIcon={<TuesdayChecked/>}
+                          checked={T}
+                          onChange={handleDays}
+                          name="T"
+                        />
+                      } 
+                      label="" 
+                    />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<WednesdayUnchecked />} 
+                          checkedIcon={<WednesdayChecked/>}
+                          checked={W}
+                          onChange={handleDays}
+                          name="W"
+                        />
+                      } 
+                      label="" 
+                    />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<ThursdayUnchecked />} 
+                          checkedIcon={<ThursdayChecked/>}
+                          checked={R}
+                          onChange={handleDays}
+                          name="R"
+                        />
+                      } 
+                      label="" />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<FridayUnchecked />} 
+                          checkedIcon={<FridayChecked/>}
+                          checked={F}
+                          onChange={handleDays}
+                          name="F"
+                        />
+                      } 
+                      label="" 
+                    />
+                    <FormControlLabel 
+                      control={
+                        <Checkbox 
+                          icon={<SaturdayUnchecked />} 
+                          checkedIcon={<SaturdayChecked/>}
+                          checked={S}
+                          onChange={handleDays}
+                          name="S"
+                        />
+                      } 
+                      label="" 
+                    />
+                  </FormGroup>
+
+                  <FormGroup
+                    sx={{
+                      my: '2vh',
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <DatePicker 
+                      onChange={(date)=>setStartDate(date)}
+                      value={startDate}
+                      
+                      sx={{
+                        width: '40%', 
+                        mx: '1vw',
+                        color: '#ffffff',
+                        border: 'none',
+                        '& .MuiSvgIcon-root': {
+                          color: 'white',
+                        },
+                        '& .MuiInputBase-input': {
+                          color: 'white',
+                        },
+                        '& .MuiFormLabel-root': {
+                          color: 'white',
+                          borderColor: '#ffffff',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:hover .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                      }}
+
+                      label="Start"
+                    />
+
+                    <DatePicker 
+                      onChange={(date)=>setEndDate(date)}
+                      value={endDate}
+
+                      sx={{
+                        width: '40%', 
+                        mx: '1vw',
+                        color: '#ffffff',
+                        border: 'none',
+                        '& .MuiSvgIcon-root': {
+                          color: 'white',
+                        },
+                        '& .MuiInputBase-input': {
+                          color: 'white',
+                        },
+                        '& .MuiFormLabel-root': {
+                          color: 'white',
+                          borderColor: '#ffffff',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:hover .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:focus .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#ffffff',
+                          }
+                        },
+                      }}
+
+                      label="End"
+                    />
+                  </FormGroup>
+
+                  <FormGroup
+                    sx={{
+                      my: '3%',
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <TimePicker 
+                      onChange={(time)=>setStartTime(time)}
+                      value={startTime}
+
+                      sx={{
+                        width: '40%', 
+                        mx: '1vw',
+                        color: '#ffffff',
+                        border: 'none',
+                        '& .MuiSvgIcon-root': {
+                          color: 'white',
+                        },
+                        '& .MuiInputBase-input': {
+                          color: 'white',
+                        },
+                        '& .MuiFormLabel-root': {
+                          color: 'white',
+                          borderColor: '#ffffff',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:hover .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                      }}
+
+                      label="From"
+                    />
+
+                    <TimePicker 
+                      onChange={(time)=>setEndTime(time)}
+                      value={endTime}
+
+                      sx={{
+                        width: '40%', 
+                        mx: '1vw',
+                        color: '#ffffff',
+                        border: 'none',
+                        '& .MuiSvgIcon-root': {
+                          color: 'white',
+                        },
+                        '& .MuiInputBase-input': {
+                          color: 'white',
+                        },
+                        '& .MuiFormLabel-root': {
+                          color: 'white',
+                          borderColor: '#ffffff',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:hover .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'white', // Set the border color to white
+                          },
+                        },
+                        '&:focus .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#ffffff',
+                          }
+                        },
+                      }}
+
+                      label="To"
+                    />
+                  </FormGroup>
+
+                  <TextField 
+                    onChange={e=>setHoursPerDay(parseFloat(e.target.value))}
+                    value={hoursPerDay}
                     
-                    sx={{
-                      width: '40%', 
-                      mx: '1vw',
-                      color: '#ffffff',
-                      border: 'none',
-                      '& .MuiSvgIcon-root': {
-                        color: 'white',
-                      },
-                      '& .MuiInputBase-input': {
-                        color: 'white',
-                      },
-                      '& .MuiFormLabel-root': {
-                        color: 'white',
-                        borderColor: '#ffffff',
-                      },
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:hover .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
+                    label="Hours per Day"
+                    required
+                    variant="outlined"
+                    type="number"
+                    InputLabelProps={{
+                      shrink: true,
                     }}
-
-                    label="Start"
-                  />
-
-                  <DatePicker 
-                    onChange={(date)=>setEndDate(date)}
-                    value={endDate}
-
+                    // className="custom-textfield"
+                    // color='primary'
                     sx={{
-                      width: '40%', 
-                      mx: '1vw',
-                      color: '#ffffff',
-                      border: 'none',
-                      '& .MuiSvgIcon-root': {
-                        color: 'white',
-                      },
-                      '& .MuiInputBase-input': {
-                        color: 'white',
-                      },
-                      '& .MuiFormLabel-root': {
-                        color: 'white',
-                        borderColor: '#ffffff',
-                      },
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:hover .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:focus .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: '#ffffff',
-                        }
-                      },
-                    }}
-
-                    label="End"
-                  />
-                </FormGroup>
-
-                <FormGroup
-                  sx={{
-                    my: '3%',
-                    display: 'flex',
-                    flexDirection: 'row'
-                  }}
-                >
-                  <TimePicker 
-                    onChange={(time)=>setStartTime(time)}
-                    value={startTime}
-
-                    sx={{
-                      width: '40%', 
-                      mx: '1vw',
-                      color: '#ffffff',
-                      border: 'none',
-                      '& .MuiSvgIcon-root': {
-                        color: 'white',
-                      },
-                      '& .MuiInputBase-input': {
-                        color: 'white',
-                      },
-                      '& .MuiFormLabel-root': {
-                        color: 'white',
-                        borderColor: '#ffffff',
-                      },
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:hover .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                    }}
-
-                    label="From"
-                  />
-
-                  <TimePicker 
-                    onChange={(time)=>setEndTime(time)}
-                    value={endTime}
-
-                    sx={{
-                      width: '40%', 
-                      mx: '1vw',
-                      color: '#ffffff',
-                      border: 'none',
-                      '& .MuiSvgIcon-root': {
-                        color: 'white',
-                      },
-                      '& .MuiInputBase-input': {
-                        color: 'white',
-                      },
-                      '& .MuiFormLabel-root': {
-                        color: 'white',
-                        borderColor: '#ffffff',
-                      },
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:hover .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'white', // Set the border color to white
-                        },
-                      },
-                      '&:focus .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: '#ffffff',
-                        }
-                      },
-                    }}
-
-                    label="To"
-                  />
-                </FormGroup>
-
-                <TextField 
-                  onChange={e=>setHoursPerDay(parseFloat(e.target.value))}
-                  value={hoursPerDay}
-                  
-                  label="Hours per Day"
-                  required
-                  variant="outlined"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  // className="custom-textfield"
-                  // color='primary'
-                  sx={{
-                    my: '3%',
-                    color: 'white',
-                    '& .MuiFormLabel-root': {
+                      my: '3%',
                       color: 'white',
-                    },
-                    '& .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiInputBase-root': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiOutlineInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiInputBase-input': {
-                      color: 'white',
-                    },
-                  }}
+                      '& .MuiFormLabel-root': {
+                        color: 'white',
+                      },
+                      '& .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiInputBase-root': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .MuiOutlineInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '&:hover .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'white',
+                      },
+                      '& .MuiInputBase-input': {
+                        color: 'white',
+                      },
+                    }}
+                  />
+
+                  <Button type="submit" variant="contained" sx={{fontWeight: '600', height: '6vh', borderRadius: '5px'}}>Generate Schedule</Button>
+
+                </form>
+              </Box>
+              <Box sx={{
+                width: "50%",
+                my: "10vh",
+                height: "calc(100% - 20vh)",
+                border: 3,
+                borderRadius: 3,
+                py: "2vh",
+                px: "2vw",
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}>
+                <Calendar 
+                  localizer={localizer}
+                  events={events}
+                  startAccessor="start"
+                  endAccessor="end"
+                  style={{ height: "100%" }}
+                  key={rerender}
                 />
+              </Box>
 
-                <Button type="submit" variant="contained" sx={{fontWeight: '600', height: '6vh', borderRadius: '5px'}}>Generate Schedule</Button>
-
-              </form>
             </Box>
-            <Box sx={{
-              width: "50%",
-              my: "10vh",
-              height: "calc(100% - 20vh)",
-              border: 3,
-              borderRadius: 3,
-              py: "2vh",
-              px: "2vw",
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}>
-              <Calendar 
-                localizer={localizer}
-                events={events}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: "100%" }}
-                key={rerender}
-              />
-            </Box>
-
-          </Box>
-        }
-      </Box>
-    </LocalizationProvider>    
+          }
+        </Box>
+      </LocalizationProvider>    
+    </ThemeProvider>
   );
 }
 

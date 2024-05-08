@@ -1,0 +1,47 @@
+/* custom-calendar.css */
+.rbc-calendar {
+    background-color: #ffffff; /* Dark background for the entire calendar */
+  }
+  
+  .rbc-month-view {
+    border-color: #ae7474; /* Lighter borders within the calendar */
+  }
+  
+  .rbc-day-bg {
+    background-color: #f5efeb; /* Slightly lighter background for day cells */
+  }
+  
+  .rbc-today {
+    background-color: #dad0ca; /* Distinct color for today */
+  }
+  
+  .rbc-event {
+    background-color: #0f4953; /* Custom color for events */
+  }
+  
+  .rbc-header {
+    background-color: #786262; /* Dark background for headers */
+    color: #f9fcfb; /* White text for headers */
+  }
+  
+  .rbc-label {
+    color: #786262; /* White text for headers */
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+
+  .rbc-events-container {
+    border-left-color: #dad0ca;
+    border-left-style: dotted;
+    border-left-width: 2px;
+    bottom: 0px;
+  }
+
+  .rbc-btn-group {
+    padding: 1.2em 0.75em;
+    min-width: 10ch;
+    min-height: 50px;
+  }
+
+  .rbc-row {
+    color:rgba(138, 122, 122, 0.87);
+  }
