@@ -89,7 +89,14 @@ More detailed instructions can be found here: [Calendar API Quickstart](https://
 
 4. Install the requirements using `pip install -r requirements.txt`
 
+## Frontend Setup
+
+1. Activate virtual environment and install all requirements
+2. Navigate to the frontend server in a terminal and run `npm run dev`
+3. Open a new terminal, navigate to the llm folder, and run `python main.py`
+4. Navigate to https://localhost:5173
+
 
 # Developers
 * Paige Lee (Worked on Google Calendar API implementation)
-* 
+* Ifra Baig (Worked on Frontend and Flask integration)
