@@ -101,3 +101,4 @@ More detailed instructions can be found here: [Calendar API Quickstart](https://
 * Paige Lee (Worked on Google Calendar API implementation)
 * Ifra Baig (Worked on Frontend and Flask integration)
 * Anish Mukherjee (Worked on Llama2 LLM implementation)
+* Brillina Wang (Worked on Frontend)
